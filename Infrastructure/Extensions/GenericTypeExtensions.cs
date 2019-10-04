@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Communication.API.Extensions
+namespace Communication.API.Infrastructure.Extensions
 {
     public static class GenericTypeExtensions
     {

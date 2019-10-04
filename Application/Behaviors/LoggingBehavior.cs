@@ -1,4 +1,4 @@
-﻿using Communication.API.Extensions;
+﻿using Communication.API.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;

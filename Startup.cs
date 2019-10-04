@@ -1,5 +1,10 @@
 ﻿using Communication.API.Application.Behaviors;
 using Communication.API.Application.Commands;
+using Communication.API.Application.Models;
+using Communication.API.Application.Validations;
+using Communication.API.Infrastructure.Filters;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,13 +26,21 @@ namespace Communication.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            .AddFluentValidation();
 
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "POC MediatR", Version = "v1" }));
 
             services.AddMediatR(typeof(SendEmailCommand));
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+
+            services.AddTransient<IValidator<SendEmailCommand>, SendEmailCommandValidator>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

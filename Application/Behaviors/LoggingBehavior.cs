@@ -1,6 +1,8 @@
-﻿using Communication.API.Infrastructure.Extensions;
+﻿using Communication.API.Domain.Exceptions;
+using Communication.API.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +19,16 @@ namespace Communication.API.Application.Behaviors
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            _logger.LogInformation("----- Handling command {CommandName} ({@Command})", request.GetGenericTypeName(), request);
+            TResponse response = default;
 
-            var response = await next();
+            _logger.LogInformation("::::::::::::: Handling command {CommandName} ({@Command})", request.GetGenericTypeName(), request);
 
-            _logger.LogInformation("----- Command {CommandName} handled - response: {@Response}", request.GetGenericTypeName(), response);
+            await Policy
+              .Handle<DomainException>()
+              .RetryAsync(3)
+              .ExecuteAsync(async () => { response = await next(); });         
+
+            _logger.LogInformation("::::::::::::: Command {CommandName} handled - response: {@Response}", request.GetGenericTypeName(), response);
 
             return response;
         }

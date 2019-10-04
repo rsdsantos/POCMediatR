@@ -27,7 +27,7 @@ namespace Communication.API.Application.Behaviors
         {
             var typeName = request.GetGenericTypeName();
 
-            _logger.LogInformation("----- Validating command {CommandType}", typeName);
+            _logger.LogInformation("::::::::::::: Validating command {CommandType}", typeName);
 
             var failures = _validators
                 .Select(v => v.Validate(request))
@@ -37,7 +37,7 @@ namespace Communication.API.Application.Behaviors
 
             if (failures.Any())
             {
-                _logger.LogWarning("Validation errors - {CommandType} - Command: {@Command} - Errors: {@ValidationErrors}", typeName, request, failures);
+                _logger.LogWarning("::::::::::::: Validation errors - {CommandType} - Command: {@Command} - Errors: {@ValidationErrors}", typeName, request, failures);
 
                 throw new DomainException($"Command Validation Errors for type {typeof(TRequest).Name}", new ValidationException("Validation exception", failures));
             }

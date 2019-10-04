@@ -37,10 +37,10 @@ namespace Communication.API
 
             services.AddMediatR(typeof(SendEmailCommand));
 
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+            //services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));            
 
-            services.AddTransient<IValidator<SendEmailCommand>, SendEmailCommandValidator>();
+            services.AddScoped<IValidator<SendEmailCommand>, SendEmailCommandValidator>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
